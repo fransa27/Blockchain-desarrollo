@@ -46,7 +46,7 @@ class Main extends Component {
               type="text"
               ref={(input) => { this.productName = input; }}
               className="form-control"
-              placeholder="Nombre del producto"
+              placeholder="Cantidad de energía en Watts"
               required />
           </div>
           <div className="form-group mr-sm-2">
@@ -79,7 +79,7 @@ class Main extends Component {
                 <tr key={key}>
                   <td>{product.id.toString()}</td>
                   <td>{product.name}</td>
-                  <td>{window.web3.utils.fromWei(product.price.toString(), 'Ether')} Eth</td>
+                  <td>{window.web3.utils.fromWei(product.price.toString(), 'ether')} Eth</td>
                   <td>{product.owner}</td>
                   <td>{product.purchased ? "Sí" : "No"}</td>
                   <td>

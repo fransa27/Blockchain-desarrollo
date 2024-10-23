@@ -70,7 +70,9 @@ module.exports = {
       network_id: "*",       // Any network (default: none)
      },
     contracts_directory: './contracts/',
-    contracts_build_directory: './build/contracts/',
+    //contracts_build_directory: './build/contracts/',
+    contracts_build_directory: './src/abi/',
+
     //
     // An additional network, but with some advanced options…
     // advanced: {

@@ -36,15 +36,17 @@ class Main extends Component {
         <h1>Añadir Producto</h1>
         <form onSubmit={(event) => {
           event.preventDefault();
-          const name = this.productName.value;
+          const energy = this.productEnergy.value;
           const price = window.web3.utils.toWei(this.productPrice.value.toString(), 'ether');
-          this.props.createProduct(name, price);
+          console.log("precio: ", price)
+          console.log("energia: ",energy)
+          this.props.createProduct(price, energy);
         }}>
           <div className="form-group mr-sm-2">
             <input
-              id="productName"
+              id="productEnergy"
               type="text"
-              ref={(input) => { this.productName = input; }}
+              ref={(input) => { this.productEnergy = input; }}
               className="form-control"
               placeholder="Cantidad de energía en Watts"
               required />
@@ -66,7 +68,7 @@ class Main extends Component {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Nombre</th>
+              <th>Cantidad de Energía</th>
               <th>Precio</th>
               <th>Propietario</th>
               <th>Comprado</th>
@@ -78,7 +80,9 @@ class Main extends Component {
               return (
                 <tr key={key}>
                   <td>{product.id.toString()}</td>
-                  <td>{product.name}</td>
+                  <td>{product.energy}</td>
+                  {/* <td>{product.price}</td> */}
+                  
                   <td>{window.web3.utils.fromWei(product.price.toString(), 'ether')} Eth</td>
                   <td>{product.owner}</td>
                   <td>{product.purchased ? "Sí" : "No"}</td>

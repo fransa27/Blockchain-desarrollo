@@ -32,9 +32,9 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts();
     this.setState({ account: accounts[0] });
     const networkId = await web3.eth.net.getId();
-    console.log("netID: ", networkId)
+    //console.log("netID: ", networkId)
     const networkData = Marketplace.networks[networkId];
-    console.log("net: ", networkData)
+    //console.log("net: ", networkData)
     if (networkData) {
       const marketplace = new web3.eth.Contract(Marketplace.abi, networkData.address);
       this.setState({ marketplace });
@@ -68,21 +68,42 @@ class App extends Component {
     this.purchaseProduct = this.purchaseProduct.bind(this);
   }
 
-  createProduct(name, price) {
+  /* createProduct(name, price) {
     this.setState({ loading: true });
-    this.state.marketplace.methods.createProduct(name, price)
-      .send({ from: this.state.account })
+    this.state.marketplace.methods.createProduct(name, price).send({ from: this.state.account })
       .once('receipt', (receipt) => {
         this.setState({ loading: false });
+        window.location.reload();  // Recarga la página después de la confirmación
       });
+  } */
+  createProduct(energy, price) {
+    console.log("Energia", energy);
+    console.log("precio ",price);
+    this.setState({ loading: true });
+    try {
+      this.state.marketplace.methods.createProduct(energy, price).send({ from: this.state.account })
+        .once('receipt', (receipt) => {
+          this.setState({ loading: false });
+          window.location.reload();  // Recarga la página después de la confirmación
+        })
+        .on('error', (error) => {
+          console.error('Error:', error);
+          this.setState({ loading: false });
+          window.location.reload();  // Recarga la página incluso si hay un error
+        });
+    } catch (error) {
+      console.error('Error:', error);
+      this.setState({ loading: false });
+      //window.location.reload();  // Recarga la página incluso si hay un error
+    }
   }
 
   purchaseProduct(id, price) {
     this.setState({ loading: true });
-    this.state.marketplace.methods.purchaseProduct(id)
-      .send({ from: this.state.account, value: price })
+    this.state.marketplace.methods.purchaseProduct(id).send({ from: this.state.account, value: price })
       .once('receipt', (receipt) => {
         this.setState({ loading: false });
+        window.location.reload();  // Recarga la página después de la confirmación
       });
   }
 

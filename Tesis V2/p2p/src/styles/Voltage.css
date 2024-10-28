@@ -1,0 +1,12 @@
+.voltaje-box {
+    width: 200px;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    color: white;
+    background-color: grey; /* Color predeterminado */
+    border: 2px solid black;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s; /* Transición suave */
+}

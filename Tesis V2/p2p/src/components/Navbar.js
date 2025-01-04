@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/Navbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faSolarPanel, faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faSolarPanel, faCartShopping, faBolt } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
 
 class Navbar extends Component {
@@ -13,6 +13,13 @@ class Navbar extends Component {
           className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
         >
           <FontAwesomeIcon icon={faHouse} /> Home Monitoring
+        </NavLink>
+
+        <NavLink 
+          to="/SmartMeter"
+          className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+        >
+          <FontAwesomeIcon icon={faBolt} /> Smart Meter
         </NavLink>
 
         <NavLink 

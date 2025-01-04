@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Páginas que vamos a rutear
 import HEMS from './components/HEMS';
 import PVSystem from './components/PVSystem';
+import DeviceControl from "./components/SonOFFInfo";
 
 class App extends Component {
   async componentWillMount() {
@@ -122,6 +123,9 @@ class App extends Component {
                   {/* Ruta para PV System Monitoring */}
                   <Route path="/PV" element={<PVSystem />} />
                   
+                  {/* Ruta para SonOff Monitoring */}
+                  <Route path="/SmartMeter" element={<DeviceControl />} />
+
                   {/* Ruta para Marketplace */}
                   <Route
                     path=""

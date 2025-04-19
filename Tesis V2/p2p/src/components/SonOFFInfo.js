@@ -10,8 +10,30 @@ const DeviceControl = () => {
   const [infoMensual, setInfoMensual] = useState([]);
   const [loadingMensual, setLoadingMensual] = useState(true); 
   const [errorMensual, setErrorMensual] = useState(null);  
-  
 
+  const THINGSPEAK_API_KEY = "TU_WRITE_API_KEY"; // Reemplaza con tu clave de escritura de ThingSpeak
+
+  const sendToThingSpeak = async (data) => {
+    try {
+      const response = await axios.post('https://api.thingspeak.com/update', null, {
+        params: {
+          api_key: process.env.THINGSPEAK_API_KEY,
+          field5: data.voltage,
+          field6: data.current,
+          field7: data.power,
+          field8: data.energyUsage,
+        },
+      });
+
+      if (response.data === 0) {
+        console.error("Error al enviar datos a ThingSpeak.");
+      } else {
+        console.log("Datos enviados a ThingSpeak. Entry ID:", response.data);
+      }
+    } catch (error) {
+      console.error("Error al enviar datos a ThingSpeak:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchDevice = async () => {
@@ -22,8 +44,25 @@ const DeviceControl = () => {
 
         if (Array.isArray(data)) {
           setDevices(data);
+          // Publicar datos de cada dispositivo a ThingSpeak
+          data.forEach(device => {
+            const deviceData = {
+              power: device.params?.power || 0,
+              voltage: device.params?.voltage || 0,
+              current: device.params?.current || 0,
+              energyUsage: device.params?.energyUsage || 0,
+            };
+            sendToThingSpeak(deviceData);
+          });
         } else if (data && typeof data === 'object') {
           setDevices([data]); // Si es un objeto, lo convierte en un array
+          const deviceData = {
+            power: data.params?.power || 0,
+            voltage: data.params?.voltage || 0,
+            current: data.params?.current || 0,
+            energyUsage: data.params?.energyUsage || 0,
+          };
+          sendToThingSpeak(deviceData);
         } else {
           throw new Error('Estructura de datos inesperada');
         }
@@ -73,11 +112,7 @@ const DeviceControl = () => {
     if (!infoMensual) return null;
 
     return {
-      labels: /* infoMensual
-        .slice() // Crea una copia para no modificar el array original
-        .reverse() // Invierte el orden de los elementos
-        .map((item) => `Día ${item.day}`),  */
-        infoMensual.map((item) => `Día ${item.day}`), // Etiquetas de días
+      labels: infoMensual.map((item) => `Día ${item.day}`), // Etiquetas de días
       datasets: [
         {
           label: 'Uso Diario de Energía (kWh)',
@@ -127,8 +162,8 @@ const DeviceControl = () => {
                 devices.map((device, index) => (
                 <div key={device.deviceid || index}>
                     <h3>Device name: {device.name || 'Dispositivo sin nombre'}</h3>
-                    <p>Power: {device.params?.power || 'Desconocido'}</p>
-                    <p>Voltage: {device.params?.voltage || 'Desconocido'}</p>
+                    <p>Power: {device.params?.power || 'Desconocido'} </p>
+                    <p>Voltage: {device.params?.voltage || 'Desconocido' }</p>
                     <p>Current: {device.params?.current || 'Desconocido'}</p>
                 </div>
                 ))

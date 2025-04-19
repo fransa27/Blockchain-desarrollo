@@ -9,7 +9,7 @@
   "params": {
     "bindInfos": {},
     "version": 8,
-    "demNextFetchTime": 1736049600000,
+    "demNextFetchTime": 1736827200000,
     "only_device": {
       "ota": "success"
     },
@@ -19,7 +19,7 @@
     "bssid": "0c:b6:d2:d2:b4:b0",
     "fwVersion": "3.5.0",
     "staMac": "84:CC:A8:A9:BD:1D",
-    "rssi": -36,
+    "rssi": -42,
     "init": 1,
     "alarmType": "pcv",
     "alarmVValue": [
@@ -34,13 +34,13 @@
       -1,
       -1
     ],
-    "switch": "off",
+    "switch": "on",
     "startup": "off",
     "pulse": "off",
     "pulseWidth": 500,
-    "power": "0.00",
-    "voltage": "221.43",
-    "current": "0.00",
+    "power": "76.62",
+    "voltage": "222.60",
+    "current": "0.42",
     "oneKwh": "stop",
     "uiActive": 60,
     "timeZone": -3
@@ -88,14 +88,14 @@
   "extraNotify": {},
   "createdAt": "2024-12-18T13:22:54.396Z",
   "__v": 0,
-  "address": "/200.1.20.254:3994",
+  "address": "/200.1.20.254:44386",
   "ip": "200.1.20.254",
   "location": "",
-  "onlineTime": "2025-01-02T18:07:13.202Z",
+  "onlineTime": "2025-01-13T14:33:12.429Z",
   "tags": {
     "m_9660_fsfr": "on"
   },
-  "offlineTime": "2025-01-02T18:06:57.196Z",
+  "offlineTime": "2025-01-08T01:47:04.428Z",
   "deviceUrl": "https://us-api.coolkit.cc/api/detail/5c700f7ecc248c47441fd236.html",
   "brandName": "SONOFF",
   "productModel": "POWR2",

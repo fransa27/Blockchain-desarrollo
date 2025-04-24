@@ -30,7 +30,7 @@ class Navbar extends Component {
         </NavLink>
 
         <NavLink 
-          to="/marketplace"
+          to="/"
           className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
         >
           <FontAwesomeIcon icon={faCartShopping} /> Energy Market

@@ -6,7 +6,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleUsuarioClick = () => {
-    navigate('/marketplace'); // /usuario
+    navigate('/'); // /usuario
   };
 
   const handleCoordinadorClick = () => {

@@ -119,8 +119,7 @@ class App extends Component {
             <div className="row">
               <main role="main" className="col-lg-12 d-flex">
                 <Routes>
-                  {/* Ruta para loggearse */}
-                  <Route path="/" element={<LoginPage />} />
+                  
 
                   {/* Ruta para HEMS Monitoring */}
                   <Route path="/HEMS" element={<HEMS />} />
@@ -131,12 +130,10 @@ class App extends Component {
                   {/* Ruta para SonOff Monitoring */}
                   <Route path="/SmartMeter" element={<DeviceControl />} />
 
-                  {/* Ruta para Coordinator */}
-                  <Route path="/coordinator" element={<CoordinadorPage />} />
 
                   {/* Ruta para Marketplace */}
                   <Route
-                    path="/marketplace"
+                    path="/"
                     element={
                       this.state.loading
                         ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>

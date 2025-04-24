@@ -30,7 +30,7 @@ class Navbar extends Component {
         </NavLink>
 
         <NavLink 
-          to=""
+          to="/marketplace"
           className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
         >
           <FontAwesomeIcon icon={faCartShopping} /> Energy Market
@@ -38,7 +38,7 @@ class Navbar extends Component {
 
         <a
           className="navbar-brand col-sm-3 col-md-2 mr-0"
-          href="https://github.com/panxolopez/P2P-SmartGrids"
+          /* href="https://github.com/panxolopez/P2P-SmartGrids" */
           target="_blank"
           rel="noopener noreferrer"
         >

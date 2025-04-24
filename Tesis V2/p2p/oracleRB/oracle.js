@@ -36,5 +36,5 @@ app.post("/report-energy", async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log("🧙 Oráculo escuchando en http://localhost:3000");
+    console.log("Oráculo escuchando en http://localhost:3050"); //otro puerto
 });

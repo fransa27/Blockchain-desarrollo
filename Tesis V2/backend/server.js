@@ -1,7 +1,9 @@
+//server ewelink 
 const express = require('express');
 const cors = require('cors');
 const ewelink = require('ewelink-api');
 const fs = require('fs'); // Importa el módulo 'fs'
+const bodyParser = require('body-parser');
 require('dotenv').config();
 
 const app = express();
@@ -74,6 +76,27 @@ app.get('/api/mensual', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+//HEMS
+let ultimoValorSensor = null;
+app.use(bodyParser.json());
+
+app.post('/sensor', (req, res) => {
+  ultimoValorSensor = req.body;
+  console.log("Dato recibido del HEMS:", ultimoValorSensor);
+  res.sendStatus(200);
+});
+//formato de recepcion
+/*
+data:{
+voltage - float,
+power - float,
+current - float
+}
+*/
+app.get('/ultimo', (req, res) => {
+  res.json({ valor: ultimoValorSensor });
 });
 
 

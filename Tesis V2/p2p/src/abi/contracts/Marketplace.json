@@ -10917,12 +10917,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x5eB7cB1520fc7291e071B21Ee49AEeF465039f3A",
-      "transactionHash": "0x6ac8f39abde7c8327e5a19463f1ae74fca75b657d00580d5aecc6c3a3274465b"
+      "address": "0x05fD8D8A6a29bDcD4D22e3A3A3a7f788EFd70062",
+      "transactionHash": "0x89597441ecc121823735454af59109c24ad9bad246eb01004b7819985a4595dc"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-10-23T15:00:09.841Z",
+  "updatedAt": "2025-05-01T22:34:23.806Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

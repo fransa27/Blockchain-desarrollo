@@ -10,8 +10,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HEMS from './components/HEMS';
 import PVSystem from './components/PVSystem';
 import DeviceControl from "./components/SonOFFInfo";
-import CoordinadorPage from './components/CoordinatorPage';
-import LoginPage from './components/LoginPage';
+//import CoordinadorPage from './components/CoordinatorPage';
+//import LoginPage from './components/LoginPage';
 
 class App extends Component {
   async componentWillMount() {

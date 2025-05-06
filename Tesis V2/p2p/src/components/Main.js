@@ -140,6 +140,7 @@ class Main extends Component {
                   <th>Amount of Energy</th>
                   <th>Price</th>
                   <th>Requester</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>

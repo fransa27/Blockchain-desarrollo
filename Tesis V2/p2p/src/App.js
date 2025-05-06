@@ -51,6 +51,16 @@ class App extends Component {
           products: [...this.state.products, product]
         });
       }
+      //los disponibles para yo vender
+      const productCount_buyer = await marketplace.methods.productCount_buyer().call();
+      this.setState({ productCount_buyer });
+
+      for (let i = 1; i <= productCount_buyer; i++) {
+        const request = await marketplace.methods.products_buyer(i).call();
+        this.setState({
+          products_buyer: [...this.state.products_buyer, request]
+        });
+      }
 
       this.setState({ loading: false });
     } else {
@@ -64,11 +74,14 @@ class App extends Component {
       account: '',
       productCount: 0,
       products: [],
+      products_buyer: [],
       loading: true
     };
 
     this.createProduct = this.createProduct.bind(this);
     this.purchaseProduct = this.purchaseProduct.bind(this);
+    this.createProduct_buyer = this.createProduct_buyer.bind(this);
+    //this.sellToBuyerRequest = this.sellToBuyerRequest(this);
   }
 
   /* createProduct(name, price) {
@@ -110,6 +123,24 @@ class App extends Component {
       });
   }
 
+  createProduct_buyer = (price, energy) => {
+    this.state.marketplace.methods.createProduct_buyer(price, energy)
+      .send({ from: this.state.account })
+      .once('receipt', (receipt) => {
+        // Refresca la vista o estado
+        window.location.reload();
+      });
+  }
+
+  sellToBuyerRequest = (id, price) => {
+    
+    this.state.marketplace.methods.sellToBuyerRequest(id)
+      .send({ from: this.state.account, value: price })
+      .once('receipt', (receipt) => {
+        window.location.reload();  // Recarga la página después de la confirmación
+      });    
+  };
+
   render() {
     return (
       <Router>
@@ -141,6 +172,9 @@ class App extends Component {
                             products={this.state.products}
                             createProduct={this.createProduct}
                             purchaseProduct={this.purchaseProduct}
+                            createProduct_buyer={this.createProduct_buyer}
+                            products_buyer={this.state.products_buyer}
+                            sellToBuyerRequest={this.sellToBuyerRequest}
                           />
                     }
                   />

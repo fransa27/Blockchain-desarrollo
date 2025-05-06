@@ -35,7 +35,7 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts();
     this.setState({ account: accounts[0] });
     const networkId = await web3.eth.net.getId();
-    //console.log("netID: ", networkId)
+    console.log("netID: ", networkId)
     const networkData = Marketplace.networks[networkId];
     //console.log("net: ", networkData)
     if (networkData) {

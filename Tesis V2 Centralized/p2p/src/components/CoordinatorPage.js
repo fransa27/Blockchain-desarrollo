@@ -48,8 +48,10 @@ const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyer
   const pendingPurchases = products.filter(p => p.approvalStatus === '0' && p.purchased);
 
   return (
+
     <div className="container mt-4 text-center">
-      <h1>Coordinator Panel</h1>
+      
+      <h1 style={{ textAlign: 'center' }}>Coordinator Panel</h1> 
 
       {/* VENTAS PENDIENTES */}
       <div className="card-body p-2 mb-4" style={{ backgroundColor: '#23cd05', maxHeight: '300px', overflowY: 'auto' }}>
@@ -116,20 +118,43 @@ const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyer
       </div>
 
       {/* GRÁFICOS */}
-      <h2>Monitoring Houses</h2>
       <div>
-        <p>House 1</p>
-        <div style={{ width: '60rem', height: '20rem', margin: 'auto' }}>
-          {chartData.labels ? <Line data={chartData} /> : <p>Loading data...</p>}
+      <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Monitoring Houses</h2>
+
+        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-start' }}>
+          {/* House 1 */}
+          <div style={{ textAlign: 'center' }}>
+            <p>House 1</p>
+            <div style={{ width: '40rem', height: '20rem' }}>
+              {chartData.labels ? <Line data={chartData} /> : <p>Loading data...</p>}
+            </div>
+          </div>
+
+          {/* House 2 */}
+          <div style={{ textAlign: 'center' }}>
+            <p>House 2</p>
+            <div style={{ width: '40rem', height: '20rem' }}>
+              {chartDataH2.labels ? <Line data={chartDataH2} /> : <p>Loading data...</p>}
+            </div>
+          </div>
+        </div>
         </div>
 
-        <p>House 2</p>
-        <div style={{ width: '60rem', height: '20rem', margin: 'auto' }}>
-          {chartDataH2.labels ? <Line data={chartDataH2} /> : <p>Loading data...</p>}
+        <div className='container' style={{display:'flex', justifyContent:'center', alignItems:'center' }}>
+          <button onClick={handleBackClick} className="btn btn-outline-secondary mt-3" style={{backgroundColor: '#04AA6D', /* Green */
+            border: 'none',
+            color: 'white',
+            padding: '5px 20px',
+            textAlign: 'center',
+            textDecoration: 'none',
+            display: 'inline-block',
+            fontSize: '16px',
+            margin: '4px 2px',
+            cursor: 'pointer'}}>
+              Back</button>
         </div>
-      </div>
-
-      <button onClick={handleBackClick} className="btn btn-outline-secondary mt-3">Back</button>
+        
+      
     </div>
   );
 };

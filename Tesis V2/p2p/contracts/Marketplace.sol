@@ -26,6 +26,18 @@ contract Marketplace {
         bool fulfilled; 
     }
 
+    //para obtener las transacciones y realizar el trading
+    struct Transaccion {
+        uint id;
+        uint price;
+        string energy;
+        address buyer;
+        address seller;
+    }
+
+    Transaccion[] public transacciones;
+    uint public totalTransacciones = 0;
+
     event ProductCreated(
         uint id,
         uint price,
@@ -90,6 +102,16 @@ contract Marketplace {
         (bool success, ) = _seller.call{value: msg.value}("");
         require(success, "Transfer failed");
 
+        transacciones.push(Transaccion({ //para el registro de las transacciones
+            id: _product.id,
+            price: _product.price,
+            energy: _product.energy,
+            buyer: msg.sender,
+            seller: _seller
+        }));
+        totalTransacciones++;
+
+
         emit ProductPurchased(_id, _product.price, _product.energy, payable(msg.sender), true);
     }
 
@@ -106,6 +128,15 @@ contract Marketplace {
         _request.fulfilled = true;
         products_buyer[_id] = _request;
 
+        transacciones.push(Transaccion({
+            id: _request.id,
+            price: _request.price,
+            energy: _request.energy,
+            buyer: _request.owner,
+            seller: msg.sender
+        }));
+        totalTransacciones++;
+
         emit ProductSoldToBuyer(
             _id,
             _request.price,
@@ -114,4 +145,22 @@ contract Marketplace {
             payable(msg.sender)
         );
     }
+
+    function getTransaccion(uint index) public view returns (
+        uint id,
+        uint price,
+        string memory energy,
+        address buyer,
+        address seller
+    ) {
+        require(index < totalTransacciones, "Fuera de rango");
+        Transaccion memory t = transacciones[index];
+        return (t.id, t.price, t.energy, t.buyer, t.seller);
+    }
+
+    function getCantidadTransacciones() public view returns (uint) {
+        return totalTransacciones;
+    }
+
+
 }

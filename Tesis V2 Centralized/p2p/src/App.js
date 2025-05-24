@@ -13,7 +13,7 @@ import DeviceControl from "./components/SonOFFInfo";
 import CoordinadorPage from './components/CoordinatorPage';
 import LoginPage from './components/LoginPage';
 
-const COORDINATOR = '0x5FA8EEDaCB8D394194c5a125081C090ab658F583'
+const COORDINATOR = '0x57481F4680C2e62C2D197E5596BaB892dAe17715'
 
 class App extends Component {
   async componentWillMount() {
@@ -58,9 +58,8 @@ class App extends Component {
       const coordinator = await marketplace.methods.coordinator().call();
       this.setState({ coordinator });
 
-      const pendingProducts = await marketplace.methods.getPendingProducts().call();
-      this.setState({ pendingProducts });
-      console.log("Productos pendientes:", pendingProducts);
+      const pendingBuyerRequests = await marketplace.methods.getPendingBuyerRequests().call();
+      this.setState({ pendingBuyerRequests });
 
       for (let i = 1; i <= productCount; i++) {
         const product = await marketplace.methods.products(i).call();
@@ -69,11 +68,47 @@ class App extends Component {
         });
       }
 
+      const productCount_buyer = await marketplace.methods.productCount_buyer().call();
+      this.setState({ productCount_buyer });
+
+      for (let i = 1; i <= productCount_buyer; i++) {
+        const request = await marketplace.methods.products_buyer(i).call();
+        this.setState({
+          products_buyer: [...this.state.products_buyer, request]
+        });
+      }
+
+      /* for (let i = 0; i <= productCount_buyer; i++) {
+        const productPending = await marketplace.methods.products(i).call();
+        if (productPending.approvalStatus == 'Pending'){
+          this.setState({
+            pendingProducts: [...this.state.products, productPending]
+          });
+        }        
+      } */
+      const pendingProducts = await marketplace.methods.getPendingProducts().call();
+      console.log("Productos pendientes:", pendingProducts);
+      this.setState({ pendingProducts });
+        
+
       this.setState({ loading: false });
+
+      const pendingRequests = await marketplace.methods.getPendingBuyerRequests().call();
+      console.log("pending request appjs:", pendingProducts);
+      this.setState({ pendingRequests });
+      const approvedRequests = await marketplace.methods.getApprovedBuyerRequests().call();
+      console.log("approved request appjs:", approvedRequests);
+      this.setState({ approvedRequests });
+
     } else {
       window.alert('Marketplace contract not deployed to detected network.');
     }
     console.log("Productos cargados:", this.state.products);
+
+    const coordinator = await this.state.marketplace.methods.coordinator().call();
+    console.log("Coordinador del contrato:", coordinator);
+    console.log("Tu cuenta:", this.state.account);
+    //no coinciden
   }
 
   constructor(props) {
@@ -84,13 +119,25 @@ class App extends Component {
       products: [],
       loading: true,
       coordinator:'',
-      pendingProducts: []
+      pendingProducts: [],
+      products_buyer: [],
+      pendingBuyerRequests : [],
+      pendingRequests: [],
+      approvedRequests : []
     };
 
     this.createProduct = this.createProduct.bind(this);
     this.purchaseProduct = this.purchaseProduct.bind(this);
+    this.createProduct_buyer = this.createProduct_buyer.bind(this);
+    this.sellToBuyerRequest = this.sellToBuyerRequest.bind(this);
+    this.rejectProduct = this.rejectProduct.bind(this);
+    this.approveBuyerRequest = this.approveBuyerRequest.bind(this);
+    this.rejectBuyerRequest = this.rejectBuyerRequest.bind(this);
+    this.approveProduct = this.approveProduct.bind(this);
   }
 
+
+  
   /* createProduct(name, price) {
     this.setState({ loading: true });
     this.state.marketplace.methods.createProduct(name, price).send({ from: this.state.account })
@@ -130,6 +177,15 @@ class App extends Component {
       });
   }
 
+  createProduct_buyer = (price, energy) => {
+    this.state.marketplace.methods.createProduct_buyer(price, energy)
+      .send({ from: this.state.account })
+      .once('receipt', (receipt) => {
+        // Refresca la vista o estado
+        window.location.reload();
+      });
+  }
+
   //coordintaro actions
   sellToBuyerRequest = (id, price) => {
     this.state.contract.methods.sellToBuyerRequest(id)
@@ -137,11 +193,16 @@ class App extends Component {
       .once('receipt', () => this.loadBlockchainData());
   }
 
-  async approveProduct(id){
-    await this.state.marketplace.methods.approveProduct(id).send({ 
-      from: this.state.account 
-    });
-  }  
+  approveProduct = async (id) => {
+    try {
+      await this.state.marketplace.methods.approveProduct(id).send({ from: this.state.account });
+      alert("Producto aprobado con éxito");
+    } catch (error) {
+      console.error("Error al aprobar producto:", error);
+      alert("Error: " + (error?.message || "Transacción fallida"));
+    }
+  };
+  
   
   async rejectProduct(id) {
     await this.state.marketplace.methods.rejectProduct(id).send({
@@ -149,6 +210,12 @@ class App extends Component {
     });
   };
   
+ /*  async pendingProducts() {
+    await this.state.marketplace.methods.getPendingProducts().call();
+    this.setState({ pendingProducts });
+    console.log("Productos pendientes:", pendingProducts);
+  } 
+ */
   async approveBuyerRequest(id){
     await this.state.marketplace.methods.approveBuyerRequest(id).send({ 
       from: this.state.account 
@@ -196,6 +263,9 @@ class App extends Component {
                         rejectProduct={this.rejectProduct}
                         approveBuyerRequest={this.approveBuyerRequest}
                         rejectBuyerRequest={this.rejectBuyerRequest}
+                        getPendingProducts={this.getPendingProducts}
+                        pendingRequests={this.state.pendingRequests}
+                        approvedRequests={this.state.approvedRequests}
                       />
                     ) : (
                       <div className="text-center">
@@ -230,6 +300,7 @@ class App extends Component {
                         sellToBuyerRequest={this.sellToBuyerRequest}
                         products={this.state.products}
                         products_buyer={this.state.products_buyer}
+                        approvedRequests={this.state.approvedRequests}
                         />
                     }
                   />

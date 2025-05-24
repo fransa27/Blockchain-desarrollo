@@ -157,7 +157,7 @@ contract Marketplace {
         emit ProductSoldToBuyer(_id, _request.price, _request.energy, _request.owner, payable(msg.sender));
     }
 
-    function getPendingProducts() public view returns (Product[] memory) {
+    function getPendingProducts() public view returns (Product[] memory) {      //productos en venta
         uint pendingCount = 0;
         for (uint i = 1; i <= productCount; i++) {
             if (products[i].approvalStatus == Status.Pending) {
@@ -176,4 +176,67 @@ contract Marketplace {
 
         return pendingProducts;
     }
+
+    function getPendingBuyerRequests() public view returns (ProductBuyer[] memory) {
+        uint pendingCount = 0;
+        for (uint i = 1; i <= productCount_buyer; i++) {
+            if (products_buyer[i].approvalStatus == Status.Pending) {
+                pendingCount++;
+            }
+        }
+
+        ProductBuyer[] memory pendingRequests = new ProductBuyer[](pendingCount);
+        uint index = 0;
+        for (uint i = 1; i <= productCount_buyer; i++) {
+            if (products_buyer[i].approvalStatus == Status.Pending) {
+                pendingRequests[index] = products_buyer[i];
+                index++;
+            }
+        }
+
+        return pendingRequests;
+    }
+
+    //productos aprobados
+    function getApprovedProducts() public view returns (Product[] memory) {
+        uint approvedCount = 0;
+        for (uint i = 1; i <= productCount; i++) {
+            if (products[i].approvalStatus == Status.Approved) {
+                approvedCount++;
+            }
+        }
+
+        Product[] memory approvedProducts = new Product[](approvedCount);
+        uint index = 0;
+        for (uint i = 1; i <= productCount; i++) {
+            if (products[i].approvalStatus == Status.Approved) {
+                approvedProducts[index] = products[i];
+                index++;
+            }
+        }
+
+        return approvedProducts;
+    }
+
+    function getApprovedBuyerRequests() public view returns (ProductBuyer[] memory) {
+        uint approvedCount = 0;
+        for (uint i = 1; i <= productCount_buyer; i++) {
+            if (products_buyer[i].approvalStatus == Status.Approved) {
+                approvedCount++;
+            }
+        }
+
+        ProductBuyer[] memory approvedRequests = new ProductBuyer[](approvedCount);
+        uint index = 0;
+        for (uint i = 1; i <= productCount_buyer; i++) {
+            if (products_buyer[i].approvalStatus == Status.Approved) {
+                approvedRequests[index] = products_buyer[i];
+                index++;
+            }
+        }
+
+        return approvedRequests;
+    }
+
+
 }

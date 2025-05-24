@@ -27,6 +27,9 @@ class Main extends Component {
       } else {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
       }
+
+    console.log("productos para comprar: ", this.props.products)
+
   }
 
 
@@ -121,10 +124,9 @@ class Main extends Component {
                           value={product.price}
                           onClick={async (event) => {
                             event.preventDefault();
-
                             // Verifica si el producto fue aprobado por el coordinador
-                            if (product.status !== 'Approved') {
-                              alert("Esta oferta aún no ha sido aprobada por el Coordinador. Por favor, espera la aprobación antes de intentar comprar.");
+                            if (product.approvalStatus !== 'Approved') {
+                              alert("This offer has not yet been approved by the Coordinator. Please wait for approval before attempting to purchase.");
                               return;
                             }
 
@@ -132,7 +134,7 @@ class Main extends Component {
                               await this.props.purchaseProduct(event.target.name, event.target.value);
                             } catch (error) {
                               console.error("Transaction failed:", error);
-                              alert("Ocurrió un error al intentar comprar. Revisa que tengas suficiente balance o vuelve a intentarlo.");
+                              alert("An error occurred while trying to purchase. Check that you have enough balance or try again.");
                             }
                           }}
                         >
@@ -180,17 +182,19 @@ class Main extends Component {
                               className="btn btn-primary"
                               onClick={async (event) =>{
                                 event.preventDefault();
+
+                                if (request.approvalStatus !== 'Approved') {
+                                  alert("This request has not yet been approved by the Coordinator.");
+                                  return;
+                                }
+
                                 try {
-                                  await this.props.sellToBuyerRequest(
-                                    request.id,
-                                    request.price
-                                  )
+                                  await this.props.sellToBuyerRequest(request.id);
                                 } catch (error) {
                                   console.error("Transaction failed:", error);
-                                  alert("La transacción no pudo completarse. Es posible que el Coordinador aún no haya aprobado esta oferta. Por favor, espera la aprobación antes de intentar comprar.");
+                                  alert("Error when trying to sell. Check that you have permissions and sufficient balance.");
                                 }
-                              }                               
-                              }
+                              }}
                             >
                               Sell Energy
                             </button>

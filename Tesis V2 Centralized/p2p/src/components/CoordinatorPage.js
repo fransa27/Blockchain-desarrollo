@@ -4,16 +4,16 @@ import { Line } from 'react-chartjs-2';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyerRequest, rejectBuyerRequest, pendingProducts }) => {
+const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyerRequest, rejectBuyerRequest, pendingProducts, pendingRequests, approvedRequests }) => {
   const [chartData, setChartData] = useState({});
   const [chartDataH2, setChartDataH2] = useState({});
   const navigate = useNavigate();
 
   const handleBackClick = () => navigate('/');
-
-  /* console.log(products)
-  console.log(approveProduct)
-  console.log(rejectProduct)
+  //console.log(approveProduct.products) //llega undefined
+  console.log("products: ",products)
+  //console.log("approveProduct ",approveProduct)
+  /*console.log(rejectProduct)
   console.log( approveBuyerRequest)
   console.log( rejectBuyerRequest) */
 
@@ -46,7 +46,8 @@ const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyer
 
   const pendingSales = products.filter(p => p.approvalStatus === '0' && !p.purchased);
   const pendingPurchases = products.filter(p => p.approvalStatus === '0' && p.purchased);
-
+  console.log("pendingSales: ",pendingSales)
+  console.log("pendingPurchases: ",pendingPurchases)
   return (
 
     <div className="container mt-4 text-center">
@@ -68,7 +69,7 @@ const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyer
             </tr>
           </thead>
           <tbody>
-            {pendingSales.map((product, key) => ( //era pendingSales
+            {pendingSales.map((product, key) => ( 
               <tr key={key}>
                 <td>{product.id}</td>
                 <td>{product.energy}</td>
@@ -116,6 +117,40 @@ const CoordinadorPage = ({ products, approveProduct, rejectProduct, approveBuyer
           </tbody>
         </table>
       </div>
+
+      {/* PENDIENTES REQUESTS */}
+      <div className="card-body p-2 mb-4" style={{ backgroundColor: '#23cd05', maxHeight: '300px', overflowY: 'auto' }}>
+        <h3>Pendings Requests (Pending Approval)</h3>
+        <table className="table table-sm table-bordered bg-white">
+          <thead className="thead-light">
+            <tr>
+              <th>ID</th>
+              <th>Energy</th>
+              <th>Price (ETH)</th>
+              <th>Buyer</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pendingRequests.map((request, key) => (
+              <tr key={key}>
+                <td>{request.id}</td>
+                <td>{request.energy}</td>
+                <td>{window.web3.utils.fromWei(request.price.toString(), 'ether')}</td>
+                <td>{request.owner}</td>
+                <td><span className="badge badge-warning">Pending</span></td>
+                <td>
+                  <button className="btn btn-success btn-sm mr-2" onClick={() => approveBuyerRequest(request.id)}>Approve</button>
+                  <button className="btn btn-danger btn-sm" onClick={() => rejectBuyerRequest(request.id)}>Reject</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
 
       {/* GRÁFICOS */}
       <div>

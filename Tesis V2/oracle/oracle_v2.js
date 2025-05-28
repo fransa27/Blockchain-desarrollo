@@ -10,13 +10,29 @@ const ABI = contractJson.abi;
 
 const MQTT_BROKER = "http://192.168.0.193:1883"; //borker HEMS/EMA
 const MQTT_TOPIC_ENERGY = "p2p/energy"; //publish
-const MQTT_TOPIC_RELE = "p2p/rele";
+//const MQTT_TOPIC_RELE = "p2p/rele";
 console.log("hola")
 // === Inicialización de clientes ===
 const provider = new ethers.JsonRpcProvider(GANACHE_URL);
 const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
 const mqttClient = mqtt.connect(MQTT_BROKER);
 let ultimaTransaccionIndex = 0;
+
+const fs = require("fs");
+const path = require("path");
+const transaccionesFile = path.join(__dirname, "transacciones.json");
+
+let enviadas = [];
+
+if (fs.existsSync(transaccionesFile)) {
+  try {
+    const saved = JSON.parse(fs.readFileSync(transaccionesFile));
+    enviadas = saved.enviadas || [];
+  } catch (e) {
+    console.error("Error leyendo transacciones.json:", e.message);
+  }
+}
+
 mqttClient.on("connect", () => {
   console.log("Conectado al broker MQTT");
 
@@ -24,19 +40,19 @@ mqttClient.on("connect", () => {
     try {
       const total = await contract.getCantidadTransacciones();
 
-      // Recorremos solo nuevas transacciones
-      for (let i = ultimaTransaccionIndex; i < total; i++) {
+      for (let i = 0; i < total; i++) {
+        if (enviadas.includes(i)) continue; // ya se envió
+
         const [id, price, energy, buyer, seller] = await contract.getTransaccion(i);
+        console.log(`Transacción nueva #${id}: ${energy}kWh de ${seller} → ${buyer}`);
 
-        console.log(`Transacción #${id}: ${energy}kWh entre ${seller} → ${buyer}`);
-        
-        mqttClient.publish(MQTT_TOPIC_ENERGY, energy); // Enviar energía
-        //mqttClient.publish(MQTT_TOPIC_RELE, 'true');   // Activar rele
+        mqttClient.publish(MQTT_TOPIC_ENERGY, energy);
+        enviadas.push(i);
 
-        ultimaTransaccionIndex++; // Avanza al siguiente
+        fs.writeFileSync(transaccionesFile, JSON.stringify({ enviadas }));
       }
     } catch (error) {
       console.error("Error al leer transacciones:", error.message);
     }
-  }, 10000); // Cada 10 segundos
+  }, 10000); // cada 10 segundos
 });

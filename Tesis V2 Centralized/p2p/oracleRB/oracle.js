@@ -1,40 +1,42 @@
-require("dotenv").config();
-const express = require("express");
-const Web3 = require("web3");
-const fs = require("fs");
+const { ethers } = require("ethers");
+const mqtt = require("mqtt");
 
-const app = express();
-app.use(express.json());
+// === Configuración ===
+const GANACHE_URL = "http://127.0.0.1:7545"; // Puerto por defecto de Ganache GUI 8545 es en la raspby
+const CONTRACT_ADDRESS = "0x800F27A616c8F4471a18a11AABc9b9c7A22D7A22"; // Dirección de tu contrato
+//const ABI = require('./abi/contracts/Marketplace.json'); //cambiar en el caso de centralizado 
+const contractJson = require('./abi/contracts/Marketplace.json');
+const ABI = contractJson.abi;
 
-// Cargar variables de entorno
-const { GANACHE_URL, PRIVATE_KEY, CONTRACT_ADDRESS } = process.env;
+const MQTT_BROKER = "http://192.168.0.193:1883"; //borker HEMS/EMA
+const MQTT_TOPIC_ENERGY = "p2p/energy"; //publish
+const MQTT_TOPIC_RELE = "p2p/rele";
+console.log("hola")
+// === Inicialización de clientes ===
+const provider = new ethers.JsonRpcProvider(GANACHE_URL);
+const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+const mqttClient = mqtt.connect(MQTT_BROKER);
+let ultimaTransaccionIndex = 0;
+mqttClient.on("connect", () => {
+  console.log("Conectado al broker MQTT");
 
-// Inicializar Web3
-const web3 = new Web3(GANACHE_URL);
-const account = web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
-web3.eth.accounts.wallet.add(account);
-web3.eth.defaultAccount = account.address;
-
-// Cargar ABI
-const contractJson = JSON.parse(fs.readFileSync("./EnergyOracle.json"));
-const contract = new web3.eth.Contract(contractJson.abi, CONTRACT_ADDRESS);
-
-// Ruta del oráculo
-app.post("/report-energy", async (req, res) => {
-    const { energy } = req.body;
+  setInterval(async () => {
     try {
-        const tx = await contract.methods.reportEnergy(energy).send({
-            from: account.address,
-            gas: 200000,
-        });
-        console.log("Transacción enviada:", tx.transactionHash);
-        res.status(200).send({ txHash: tx.transactionHash });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error al reportar energía");
-    }
-});
+      const total = await contract.getCantidadTransacciones();
 
-app.listen(3000, () => {
-    console.log("Oráculo escuchando en http://localhost:3050"); //otro puerto
+      // Recorremos solo nuevas transacciones
+      for (let i = ultimaTransaccionIndex; i < total; i++) {
+        const [id, price, energy, buyer, seller] = await contract.getTransaccion(i);
+
+        console.log(`Transacción #${id}: ${energy}kWh entre ${seller} → ${buyer}`);
+        
+        mqttClient.publish(MQTT_TOPIC_ENERGY, energy); // Enviar energía
+        //mqttClient.publish(MQTT_TOPIC_RELE, 'true');   // Activar rele
+
+        ultimaTransaccionIndex++; // Avanza al siguiente
+      }
+    } catch (error) {
+      console.error("Error al leer transacciones:", error.message);
+    }
+  }, 10000); // Cada 10 segundos
 });

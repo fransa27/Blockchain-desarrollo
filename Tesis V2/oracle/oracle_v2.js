@@ -45,8 +45,10 @@ mqttClient.on("connect", () => {
 
         const [id, price, energy, buyer, seller] = await contract.getTransaccion(i);
         console.log(`Transacción nueva #${id}: ${energy}kWh de ${seller} → ${buyer}`);
+        const payload = JSON.stringify({ buyer, energy });
+        mqttClient.publish(MQTT_TOPIC_ENERGY, payload);
 
-        mqttClient.publish(MQTT_TOPIC_ENERGY, energy);
+        //mqttClient.publish(MQTT_TOPIC_ENERGY, energy);
         enviadas.push(i);
 
         fs.writeFileSync(transaccionesFile, JSON.stringify({ enviadas }));
@@ -54,5 +56,5 @@ mqttClient.on("connect", () => {
     } catch (error) {
       console.error("Error al leer transacciones:", error.message);
     }
-  }, 10000); // cada 10 segundos
+  }, 100000); // cada 100 segundos
 });

@@ -97,7 +97,7 @@ class App extends Component {
     console.log("precio ",price);
     this.setState({ loading: true });
     try {
-      this.state.marketplace.methods.createProduct(energy, price).send({ from: this.state.account })
+      this.state.marketplace.methods.createProduct(energy, price).send({ from: this.state.account }) //.send({from: this.state.account, gas: 30000000, gasPrice: window.web3.utils.toWai('20','gwei'),type:'0x0'}) //para el server cambiar por eso
         .once('receipt', (receipt) => {
           this.setState({ loading: false });
           window.location.reload();  // Recarga la página después de la confirmación
@@ -116,7 +116,7 @@ class App extends Component {
 
   purchaseProduct(id, price) {
     this.setState({ loading: true });
-    this.state.marketplace.methods.purchaseProduct(id).send({ from: this.state.account, value: price })
+    this.state.marketplace.methods.purchaseProduct(id).send({ from: this.state.account, value: price }) //.send({from: this.state.account, gas: 30000000, gasPrice: window.web3.utils.toWai('20','gwei'),type:'0x0'}) //para el server cambiar por eso
       .once('receipt', (receipt) => {
         this.setState({ loading: false });
         window.location.reload();  // Recarga la página después de la confirmación
@@ -125,7 +125,7 @@ class App extends Component {
 
   createProduct_buyer = (price, energy) => {
     this.state.marketplace.methods.createProduct_buyer(price, energy)
-      .send({ from: this.state.account })
+      .send({ from: this.state.account }) //.send({from:this.state.account, gas:3000000, gasPrice: window.web3.utils.toWei('20','gwei'),type:'0x0'})
       .once('receipt', (receipt) => {
         // Refresca la vista o estado
         window.location.reload();
@@ -135,7 +135,7 @@ class App extends Component {
   sellToBuyerRequest = (id, price) => {
     
     this.state.marketplace.methods.sellToBuyerRequest(id)
-      .send({ from: this.state.account, value: price })
+      .send({ from: this.state.account, value: price }) //.send({from:this.state.account, gas:3000000, gasPrice: window.web3.utils.toWei('20','gwei'),type:'0x0'})
       .once('receipt', (receipt) => {
         window.location.reload();  // Recarga la página después de la confirmación
       });    
